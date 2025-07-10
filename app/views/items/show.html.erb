@@ -1,0 +1,32 @@
+<div class="container">
+
+  <h1 class="mt-5 mb-5"><%= @item&.title %></h1>
+
+  <div class="row align-items-stretch">
+
+    <div class="col-md-5 mb-4">
+      <% if @item&.image_url.present? %>
+        <%= image_tag @item.image_url, alt: @item.title, class: "img-fluid rounded", style: "max-width: 100%;"%>
+      <% end %>
+    </div>
+
+    <div class="col-md-7 d-flex flex-column justify-content-between">
+      <div>
+        <p> <%= @item&.description %></p>
+        <p class="lead"><%= @item&.price %>€</p>
+      </div>
+
+      <div class="mt-auto  mb-4">
+        <%= button_to "Ajouter au panier", cart_items_path(item_id: @item.id), method: :post, class: "btn btn-primary"%>
+        <%= button_to "Achat rapide", checkout_create_path(item_id: @item.id), method: :post, data: { turbo: false }, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 mb-5">
+  
+    <%= link_to "Retour à la galerie",  items_path, class: "btn btn-primary" %>
+  </div>
+  
+</div>
+ 
