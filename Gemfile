@@ -71,3 +71,5 @@ gem "devise"
 gem "stripe"
 
 # test
+
+gem "dockerfile-rails", ">= 1.7", group: :development
