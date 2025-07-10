@@ -1,0 +1,44 @@
+<section class="hero-section d-flex align-items-end justify-content-center text-center">
+  <div class="w-100 px-4">
+    <div class="container hero-content">
+      <h1>Catzy</h1>
+      <p class="lead">Des images qui murmurent à l’âme</p>
+    </div>
+  </div>
+</section>
+
+
+<div class="container">
+
+  <h1 class="mt-5 mb-5">Trouve ton bonheur ici</h1>
+
+  <div class="row">
+    <% @items.each do |item| %>
+      <div class="col-md-4">
+        <div class="card card-custom position-relative p-3 mb-5">
+
+          <div>
+            <img src="<%= item.image_url %>" alt="chat" class="card-img-custom rounded-4" >
+          </div>
+
+          <div class="card-body px-2 py-2">
+            <h3 class="card-title"><%= item.title %></h3>
+            <p ><%= truncate(item.description, length: 40) %></p>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center px-2 pb-2">
+            <span class="price-text"><%= item.price %>€</span>
+            <%= link_to 'Voir plus', item_path(item), class: "btn btn-primary btn-sm" %>
+          </div>
+          
+        </div>
+      </div>
+    <% end %>
+
+  <p style="color: green"><%= notice %></p>
+  <% if params[:success] %>
+    <p>Paiement réussi ! 🎉</p>
+  <% elsif params[:canceled] %>
+    <p>Paiement annulé.</p>
+  <% end %>
+</div>
