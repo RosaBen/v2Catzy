@@ -1,0 +1,27 @@
+<div class="container">
+
+  <h1 class="mt-5 mb-5">Merci pour votre commande </h1>
+
+  <p class="lead">Votre paiement a bien été reçu. Nous préparons votre commande !</p>
+
+  <p><%= flash[:notice] %></p>
+
+  <h2 class="mt-4 mb-4">Récapitulatif :</h2>
+
+  <% if @order.items.any? %>
+    <ul>
+      <% @order.items.each do |item| %>
+        <li class="card card-cart mb-3 p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><h3>
+            <%= item.title %></h3> - <%= number_to_currency(item.price, unit: "€") %></span>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+
+  <%= link_to "Retour à l'accueil", root_path, class: "btn btn-primary mb-4" %>
+  <!-- <%= link_to "Voir mon panier", cart_path, class: "btn btn-primary mb-4" %> -->
+</div>

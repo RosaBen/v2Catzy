@@ -1,0 +1,61 @@
+<footer class="footer custom-footer text-dark">
+  <div class="container h-100 d-flex align-items-center">
+    <div class="row w-100 justify-content-between">
+
+      <!-- Bloc gauche -->
+      <div class="col-md-6 d-flex gap-6">
+
+        <div class="me-5">
+          <ul class="list-unstyled">
+            <li><%= link_to "Mentions légales", "#" %></li>
+            <li><%= link_to "CGV", "#" %></li>
+            <li><%= link_to "RGPD", "#" %></li>
+          </ul>
+        </div>
+       
+        <div>
+          <ul class="list-unstyled">
+            <li>Contact</li>
+            <li><%= link_to "Tél : 03 89 77 45 69", "#" %></li>
+            <li><%= link_to "Email : catzy@gmail.com", "#" %></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bloc droit : Réseaux sociaux -->
+      <div class="col-md-6 d-flex justify-content-end gap-5 ms-auto">
+
+        <div>
+          <ul class="list-unstyled">
+            <li>
+              <%= link_to "#" do %>
+                <iconify-icon icon="mdi:instagram" width="24" height="24"></iconify-icon> @Catzy_insta
+              <% end %>
+            </li>
+            <li>
+              <%= link_to "#" do %>
+                <iconify-icon icon="streamline-logos:x-twitter-logo-solid" width="24" height="24"></iconify-icon> @Catzy_x
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        
+        <div>
+          <ul class="list-unstyled">
+            <li>
+              <%= link_to "#" do %>
+                <iconify-icon icon="meteor-icons:pinterest" width="24" height="24"></iconify-icon> @Catzy_pinterest
+              <% end %>
+            </li>
+            <li>
+              <%= link_to "#" do %>
+                <iconify-icon icon="meteor-icons:facebook-alt" width="24" height="24"></iconify-icon> @Catzy_fb
+              <% end %>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</footer>

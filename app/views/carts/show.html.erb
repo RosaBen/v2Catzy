@@ -1,0 +1,28 @@
+<div class="container">
+
+  <h1 class="mt-5 mb-5">Mon panier</h1>
+
+  <% if @cart && @cart.items.any? %>
+
+    <div>
+      <ul>
+        <% @cart.items.each do |item| %>
+          <li class="card card-cart mb-3 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <span><h3><%= item.title %></h3> - <%= item.price %> €</span>
+              <%= button_to "Retirer", remove_cart_item_path(item_id: item.id), method: :delete, class: "btn btn-danger mb-0" %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div> 
+    <hr>
+    <div class="d-flex justify-content-between align-items-center">
+      <p class="lead mb-0"><strong>Total : <%= @total_price %> €</strong></p>
+      <%= button_to "Payer mon panier", checkout_cart_path, method: :post, data: { turbo: false }, class: "btn btn-primary mb-0" %>
+    </div>
+
+  <% else %>
+    <p>Votre panier est vide.</p>
+  <% end %>
+</div>
