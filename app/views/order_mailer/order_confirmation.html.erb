@@ -1,0 +1,35 @@
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ffffff; padding: 40px; font-family: Arial, sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; padding: 20px;">
+        <tr>
+          <td>
+            <h1 style="margin-top: 40px; margin-bottom: 40px; font-size: 28px; color: #313131;">Bonjour <%= @user.fullname %>,</h1>
+
+            <h2 style="margin-top: 40px; margin-bottom: 40px; text-align: center; font-size: 24px; color: #313131;">
+              Merci d'avoir commandé sur Catzy !
+            </h2>
+
+            <p style="color: #666666; font-size: 16px;">
+              Voici le récapitulatif de votre commande <strong>#<%= @order.id %></strong> :
+            </p>
+
+            <ul style="color: #666666; font-size: 16px; padding-left: 20px; margin-top: 20px; margin-bottom: 20px;">
+              <% @order.items.each do |item| %>
+                <li><%= item.title %> – <%= item.price %>€</li>
+              <% end %>
+            </ul>
+
+            <p style="color: #666666; font-size: 16px;">
+              Total : <strong>   €</strong>
+            </p>
+
+            <p style="color: #666666; font-size: 16px;">
+              Nous vous remercions pour votre confiance.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
