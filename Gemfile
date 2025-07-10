@@ -68,6 +68,6 @@ end
 gem "faker"
 
 gem "devise"
-gem 'stripe'
+gem "stripe"
 
 # test
