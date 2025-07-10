@@ -1,14 +1,14 @@
-class AvatarsController < ApplicationController
-  before_action :authenticate_user!
+module AvatarsHelper
+  def user_avatar(user, options = {})
+    default_options = { alt: "Avatar de #{user.fullname}" }
+    options = default_options.merge(options)
 
-  def create
-    if params[:avatar].present?
-      current_user.avatar.attach(params[:avatar])
-      flash[:notice] = "Avatar mis à jour avec succès!"
-      redirect_to profil_path
+    if user.avatar.attached?
+      image_tag url_for(user.avatar), options
     else
-      flash[:alert] = "Veuillez sélectionner un fichier."
-      redirect_to profil_path
+      image_tag "pexels-pixabay-416160.jpg", options.merge(alt: "Avatar par défaut", style: "width: 50px; height: auto;")
     end
+  rescue
+    image_tag "https://img.freepik.com/photos-gratuite/avatar-androgyne-personne-queer-non-binaire_23-2151100205.jpg", options.merge(alt: "Avatar par défaut", style: "width: 50px; height: auto;")
   end
 end
