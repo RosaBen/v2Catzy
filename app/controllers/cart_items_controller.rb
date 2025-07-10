@@ -1,9 +1,9 @@
 class CartItemsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
 
   def create
-    cart = current_user.cart || current_user.create_cart
     item = Item.find(params[:item_id])
+    cart = current_cart
 
     if cart.items.include?(item)
       redirect_to item_path(item), notice: "Cet article est déjà dans votre panier."
