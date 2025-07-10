@@ -18,7 +18,7 @@
 
       <div class="mt-auto  mb-4">
         <%= button_to "Ajouter au panier", cart_items_path(item_id: @item.id), method: :post, class: "btn btn-primary"%>
-        <%= button_to "Achat rapide", checkout_create_path(item_id: @item.id), method: :post, data: { turbo: false }, class: "btn btn-primary" %>
+        <!-- <%= button_to "Achat rapide", checkout_create_path(item_id: @item.id), method: :post, data: { turbo: false }, class: "btn btn-primary" %> -->
       </div>
     </div>
   </div>
