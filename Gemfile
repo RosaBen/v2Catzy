@@ -69,3 +69,5 @@ gem "faker"
 
 gem "devise"
 gem 'stripe'
+
+# test
