@@ -1,0 +1,39 @@
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color: #ffffff; padding: 40px; font-family: Arial, sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; padding: 20px;">
+        <tr>
+          <td>
+            <h1 style="margin-top: 40px; margin-bottom: 40px; font-size: 28px; color: #313131;">Nouvelle commande reçue</h1>
+
+            <p style="color: #666666; font-size: 16px; margin-bottom: 20px;">
+              Une nouvelle commande a été passée sur Catzy.
+            </p>
+
+            <p style="color: #666666; font-size: 16px;">
+              <strong>Commande n° :</strong> <%= @order.id %><br>
+              <strong>Client :</strong> <%= @user.fullname %> (<%= @user.email %>)<br>
+              <strong>Date :</strong> <%= @order.created_at.strftime("%d/%m/%Y à %H:%M") %>
+            </p>
+
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eaeaea;">
+
+            <p style="color: #666666; font-size: 16px; margin-bottom: 10px;">
+              <strong>Détails de la commande :</strong>
+            </p>
+
+            <ul style="color: #666666; font-size: 16px; padding-left: 20px; margin-top: 10px; margin-bottom: 20px;">
+              <% @order.items.each do |item| %>
+                <li><%= item.title %> – <%= item.price %>€</li>
+              <% end %>
+            </ul>
+
+            <p style="color: #666666; font-size: 16px;">
+              <strong>Total :</strong>      €
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
