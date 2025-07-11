@@ -14,15 +14,26 @@ class CartItemsController < ApplicationController
   end
 
   def destroy
-  cart = current_user.cart
-  item = Item.find(params[:item_id])
+    cart = current_cart
+    item = Item.find(params[:item_id])
 
-  if cart && item
-    cart.items.destroy(item)
-    redirect_to cart_path, notice: "Article supprimé du panier."
-  else
-    redirect_to cart_path, alert: "Impossible de supprimer l'article."
+    if cart && item
+      cart.items.destroy(item)
+      
+      # Si l'utilisateur n'est pas authentifié, le rediriger vers la liste des items
+      if user_signed_in?
+        redirect_to cart_path, notice: "Article supprimé du panier."
+      else
+        redirect_to items_path, notice: "Article supprimé du panier. Connectez-vous pour sauvegarder votre panier."
+      end
+    else
+      # En cas d'erreur, rediriger selon le statut d'authentification
+      if user_signed_in?
+        redirect_to cart_path, alert: "Impossible de supprimer l'article."
+      else
+        redirect_to items_path, alert: "Impossible de supprimer l'article."
+      end
+    end
   end
-end
 
 end
