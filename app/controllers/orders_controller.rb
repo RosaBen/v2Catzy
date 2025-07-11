@@ -16,16 +16,33 @@ class OrdersController < ApplicationController
         # Créer la commande
         @order = current_user.orders.create!
 
-        # Créer les order_items avec vérification
+        # Créer les order_items avec vérification ET gestion des colonnes manquantes
         cart.items.each do |item|
           # Vérifier que l'item existe encore
           if item && item.persisted?
-            OrderItem.create!(
-              order: @order, 
-              item: item, 
-              price: item.price, 
-              quantity: 1
-            )
+            begin
+              # Essayer avec les nouveaux champs price/quantity
+              order_item_attrs = {
+                order: @order, 
+                item: item
+              }
+              
+              # Ajouter price et quantity seulement si les colonnes existent
+              if OrderItem.column_names.include?('price')
+                order_item_attrs[:price] = item.price
+              end
+              
+              if OrderItem.column_names.include?('quantity')
+                order_item_attrs[:quantity] = 1
+              end
+              
+              OrderItem.create!(order_item_attrs)
+              
+            rescue ActiveRecord::UnknownAttributeError => e
+              # Fallback pour les anciennes structures de DB
+              Rails.logger.warn "⚠️ Utilisation de la structure DB ancienne: #{e.message}"
+              OrderItem.create!(order: @order, item: item)
+            end
           else
             Rails.logger.warn "⚠️ Item #{item&.id} non trouvé lors de la création de commande"
           end
@@ -54,7 +71,23 @@ class OrdersController < ApplicationController
         
       rescue ActiveRecord::InvalidForeignKey => e
         Rails.logger.error "❌ Erreur contrainte FK: #{e.message}"
-        redirect_to root_path, alert: "Erreur: certains articles ne sont plus disponibles. Votre panier a été vidé."
+        
+        # Nettoyer le panier qui pourrait contenir des items supprimés
+        if cart
+          begin
+            # Supprimer les items qui n'existent plus
+            cart.items.each do |item|
+              unless Item.exists?(item.id)
+                cart.cart_items.where(item_id: item.id).destroy_all
+              end
+            end
+            cart.reload
+          rescue => cleanup_error
+            Rails.logger.error "Erreur nettoyage panier: #{cleanup_error.message}"
+          end
+        end
+        
+        redirect_to root_path, alert: "Erreur: certains articles ne sont plus disponibles. Votre panier a été mis à jour."
         return
       rescue => e
         Rails.logger.error "❌ Erreur création commande: #{e.message}"
