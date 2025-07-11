@@ -6,6 +6,46 @@
     <p class="lead"><%= @success_message || "Votre paiement a bien été reçu. Nous préparons votre commande !" %></p>
   </div>
 
+  <% if @order %>
+    <div class="card mt-4 p-4">
+      <h5>Récapitulatif de votre commande #<%= @order.id %></h5>
+      <div class="row">
+        <div class="col-md-8">
+          <h6>Articles commandés :</h6>
+          <ul class="list-unstyled">
+            <% @order.order_items.includes(:item).each do |order_item| %>
+              <li class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                <div class="d-flex align-items-center">
+                  <% if order_item.item&.photo&.attached? %>
+                    <%= image_tag order_item.item.photo, class: "me-3", style: "width: 60px; height: 60px; object-fit: cover; border-radius: 8px;" %>
+                  <% end %>
+                  <div>
+                    <strong><%= order_item.item&.title || "Article supprimé" %></strong><br>
+                    <small class="text-muted">Quantité: <%= order_item.quantity %></small>
+                  </div>
+                </div>
+                <span class="fw-bold">
+                  <%= number_to_currency(order_item.price / 100.0, unit: "€", separator: ",", delimiter: " ") %>
+                </span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6>Total payé</h6>
+              <h3 class="text-success">
+                <%= number_to_currency(@order.amount / 100.0, unit: "€", separator: ",", delimiter: " ") %>
+              </h3>
+              <small class="text-muted">Paiement par carte</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <div class="card mt-4 p-4">
     <h5>Que se passe-t-il maintenant ?</h5>
     <ul>
@@ -17,8 +57,8 @@
   </div>
 
   <div class="mt-4">
-    <%= link_to "Retour à l'accueil", root_path, class: "btn btn-primary me-2" %>
-    <%= link_to "Voir nos autres articles", items_path, class: "btn btn-outline-primary" %>
+    <%= link_to "Voir mes commandes", profil_path, class: "btn btn-primary me-2" %>
+    <%= link_to "Retour à l'accueil", root_path, class: "btn btn-outline-primary me-2" %>
+    <%= link_to "Continuer mes achats", items_path, class: "btn btn-outline-secondary" %>
   </div>
-</div>
 </div>

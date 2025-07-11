@@ -5,7 +5,12 @@ class CheckoutController < ApplicationController
    item = Item.find(params[:item_id])
 
    begin
-     session = Stripe::Checkout::Session.create(
+     # Stocker les informations pour créer l'order après le paiement
+     session[:checkout_cart_id] = nil # Pas de panier pour achat direct
+     session[:checkout_total_amount] = (item.price * 100).to_i # En centimes pour Stripe
+     session[:checkout_items] = [{ id: item.id, price: item.price, title: item.title }]
+
+     stripe_session = Stripe::Checkout::Session.create(
        payment_method_types: [ "card" ],
        line_items: [ {
          price_data: {
@@ -19,11 +24,11 @@ class CheckoutController < ApplicationController
          quantity: 1
        } ],
        mode: "payment",
-       success_url: request.base_url + "/?success=true",
-       cancel_url: request.base_url + "/?canceled=true",
+       success_url: request.base_url + "/order/success",
+       cancel_url: request.base_url + "/items/#{item.id}",
      )
 
-     redirect_to session.url, allow_other_host: true
+     redirect_to stripe_session.url, allow_other_host: true
    rescue Stripe::StripeError => e
      redirect_to item_path(item), alert: "Erreur lors de la création du paiement: #{e.message}"
    rescue => e
@@ -49,7 +54,15 @@ class CheckoutController < ApplicationController
    end
 
    begin
-     session = Stripe::Checkout::Session.create(
+     # Calculer le montant total pour le stocker avec l'order
+     total_amount = cart.items.sum(&:price)
+     
+     # Stocker les informations nécessaires dans la session pour créer l'order après le paiement
+     session[:checkout_cart_id] = cart.id
+     session[:checkout_total_amount] = (total_amount * 100).round # En centimes pour Stripe
+     session[:checkout_items] = cart.items.map { |item| { id: item.id, price: item.price, title: item.title } }
+
+     stripe_session = Stripe::Checkout::Session.create(
        payment_method_types: ['card'],
        line_items: cart.items.map do |item|
          {
@@ -69,7 +82,7 @@ class CheckoutController < ApplicationController
        cancel_url: request.base_url + "/cart"
      )
 
-     redirect_to session.url, allow_other_host: true
+     redirect_to stripe_session.url, allow_other_host: true
    rescue Stripe::StripeError => e
      Rails.logger.error "❌ Erreur Stripe: #{e.message}"
      redirect_to cart_path, alert: "Erreur lors de la création du paiement: #{e.message}"
