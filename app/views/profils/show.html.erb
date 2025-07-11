@@ -28,6 +28,58 @@
     </div>
     <div>
       <h1 class="mt-5 mb-5">Mes commandes</h1>
+      
+      <% if @orders.any? %>
+        <div class="row">
+          <% @orders.each do |order| %>
+            <div class="col-md-6 mb-4">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Commande #<%= order.id %></h5>
+                  <span class="badge bg-success"><%= number_to_currency(order.amount / 100.0, unit: "€", separator: ",", delimiter: " ") %></span>
+                </div>
+                <div class="card-body">
+                  <p class="text-muted mb-2">
+                    <i class="fas fa-calendar"></i> <%= order.created_at.strftime("%d/%m/%Y à %H:%M") %>
+                  </p>
+                  
+                  <h6>Articles commandés :</h6>
+                  <ul class="list-unstyled">
+                    <% order.order_items.each do |order_item| %>
+                      <li class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                          <% if order_item.item.present? %>
+                            <% if order_item.item.photo.attached? %>
+                              <%= image_tag order_item.item.photo, class: "me-2", style: "width: 40px; height: 40px; object-fit: cover; border-radius: 4px;" %>
+                            <% end %>
+                            <div>
+                              <strong><%= order_item.item.title %></strong><br>
+                              <small class="text-muted">Quantité: <%= order_item.quantity %></small>
+                            </div>
+                          <% else %>
+                            <div>
+                              <strong>Article supprimé</strong><br>
+                              <small class="text-muted">Quantité: <%= order_item.quantity %></small>
+                            </div>
+                          <% end %>
+                        </div>
+                        <span class="text-end">
+                          <%= number_to_currency(order_item.price / 100.0, unit: "€", separator: ",", delimiter: " ") %>
+                        </span>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i> Vous n'avez encore effectué aucune commande.
+          <%= link_to "Découvrir nos produits", root_path, class: "btn btn-primary btn-sm ms-2" %>
+        </div>
+      <% end %>
     </div>
 
   <% else %>

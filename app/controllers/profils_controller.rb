@@ -7,6 +7,7 @@ class ProfilsController < ApplicationController
 
   def show
     @user = current_user
+    @orders = current_user.orders.includes(:order_items => :item).order(created_at: :desc)
   end
 
   def edit
@@ -16,16 +17,22 @@ class ProfilsController < ApplicationController
   def update
     @user = current_user
 
-    if @user.update(user_params)
-      if params[:user][:avatar].present?
-        flash[:notice] = "Profil et avatar mis à jour avec succès!"
+    begin
+      if @user.update(user_params)
+        if params[:user][:avatar].present?
+          flash[:notice] = "Profil et avatar mis à jour avec succès!"
+        else
+          flash[:notice] = "Profil mis à jour avec succès!"
+        end
+        redirect_to profil_path
       else
-        flash[:notice] = "Profil mis à jour avec succès!"
+        flash.now[:alert] = "Erreur lors de la mise à jour du profil: #{@user.errors.full_messages.join(', ')}"
+        render :edit, status: :unprocessable_entity
       end
-      redirect_to profil_path
-    else
-      flash[:alert] = "Erreur lors de la mise à jour du profil."
-      render :edit
+    rescue => e
+      Rails.logger.error "Erreur lors de la mise à jour du profil: #{e.message}"
+      flash.now[:alert] = "Une erreur est survenue lors de la mise à jour du profil."
+      render :edit, status: :unprocessable_entity
     end
   end
 
