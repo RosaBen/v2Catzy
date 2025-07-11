@@ -101,7 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_10_165506) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "items"
-  add_foreign_key "carts", "users"
+  add_foreign_key "carts", "users", on_delete: :cascade
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "users"
