@@ -4,7 +4,7 @@ services:
     runtime: ruby
     plan: free
     buildCommand: './bin/render-build.sh'
-    startCommand: 'bundle exec rails db:seed && bundle exec rails server'
+    startCommand: 'bundle exec rails server'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -18,13 +18,3 @@ services:
 databases:
   - name: mysite-db
     plan: free
-
-envVars:
-  - key: DATABASE_URL
-    fromDatabase:
-      name: mysite-db
-      property: connectionString
-  - key: DATABASE_NAME
-    value: mysite_db_l0p1
-  - key: RAILS_MASTER_KEY
-    sync: false
