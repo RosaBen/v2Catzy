@@ -4,7 +4,7 @@ services:
     runtime: ruby
     plan: free
     buildCommand: './bin/render-build.sh'
-    startCommand: 'bundle exec rails server'
+    startCommand: 'bundle exec puma -p $PORT -e production'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -14,6 +14,10 @@ services:
         sync: false
       - key: WEB_CONCURRENCY
         value: 2
+      - key: RAILS_ENV
+        value: production
+      - key: RACK_ENV
+        value: production
 
 databases:
   - name: mysite-db
