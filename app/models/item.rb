@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  has_many :order_items, dependent: :restrict_with_error
+  has_many :order_items, dependent: :destroy  # Changé de restrict_with_error à destroy
   has_many :orders, through: :order_items
   has_many :cart_items, dependent: :destroy
   has_many :carts, through: :cart_items
