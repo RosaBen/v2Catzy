@@ -2,6 +2,10 @@
 
   <h1 class="mt-5 mb-5">Mon panier</h1>
 
+  <% unless user_signed_in? %>
+    <%= render 'shared/guest_cart_notice' %>
+  <% end %>
+
   <% if @cart && @cart.items.any? %>
 
     <div>
@@ -19,10 +23,15 @@
     <hr>
     <div class="d-flex justify-content-between align-items-center">
       <p class="lead mb-0"><strong>Total : <%= @total_price %> €</strong></p>
-      <%= button_to "Payer mon panier", checkout_cart_path, method: :post, data: { turbo: false }, class: "btn btn-primary mb-0" %>
+      <% if user_signed_in? %>
+        <%= button_to "Payer mon panier", checkout_cart_path, method: :post, data: { turbo: false }, class: "btn btn-primary mb-0" %>
+      <% else %>
+        <%= link_to "Se connecter pour payer", new_user_session_path, class: "btn btn-primary mb-0" %>
+      <% end %>
     </div>
 
   <% else %>
     <p>Votre panier est vide.</p>
+    <%= link_to "Voir les articles", items_path, class: "btn btn-primary" %>
   <% end %>
 </div>
