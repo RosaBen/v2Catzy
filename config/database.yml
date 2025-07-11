@@ -126,17 +126,5 @@ test:
 #       %>  
 
 production:
-  primary:
-    url: <%= ENV["DATABASE_URL"] %>
-
-  cache:
-    url: <%= "#{ENV["DATABASE_URL"].sub(/\/[^\/]+$/, "")}/#{ENV["DATABASE_NAME"]}_cache" if ENV["DATABASE_URL"] && ENV["DATABASE_NAME"] %>
-    migrations_paths: db/cache_migrate
-
-  queue:
-    url: <%= "#{ENV["DATABASE_URL"].sub(/\/[^\/]+$/, "")}/#{ENV["DATABASE_NAME"]}_queue" if ENV["DATABASE_URL"] && ENV["DATABASE_NAME"] %>
-    migrations_paths: db/queue_migrate
-
-  cable:
-    url: <%= "#{ENV["DATABASE_URL"].sub(/\/[^\/]+$/, "")}/#{ENV["DATABASE_NAME"]}_cable" if ENV["DATABASE_URL"] && ENV["DATABASE_NAME"] %>
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
