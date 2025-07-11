@@ -18,8 +18,8 @@ class CartItemsController < ApplicationController
     item = Item.find(params[:item_id])
 
     if cart && item
-      # CORRECTION: supprimer l'item DU PANIER, pas l'item lui-même
-      cart.items.delete(item)  # delete au lieu de destroy
+      # delete supprime juste du panier, destroy supprimerait l'item complètement
+      cart.items.delete(item)
       
       # Si l'utilisateur n'est pas authentifié, le rediriger vers la liste des items
       if user_signed_in?

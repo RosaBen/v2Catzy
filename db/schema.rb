@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_11_212008) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_215352) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -104,7 +104,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_212008) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "items", on_delete: :cascade
   add_foreign_key "carts", "users"
-  add_foreign_key "order_items", "items", on_delete: :restrict
+  add_foreign_key "order_items", "items", on_delete: :cascade
   add_foreign_key "order_items", "orders", on_delete: :cascade
   add_foreign_key "orders", "users"
 end
