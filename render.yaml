@@ -23,6 +23,10 @@ services:
         value: production
       - key: RACK_ENV
         value: production
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
 
 databases:
   - name: mysite-db
