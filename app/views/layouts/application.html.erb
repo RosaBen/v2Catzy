@@ -37,12 +37,6 @@
   <body>
     <%= render 'layouts/header' %>
     
-    <% if Rails.configuration.stripe[:publishable_key]&.start_with?('pk_test_') %>
-      <div class="container mt-2">
-        <%= render 'shared/stripe_test_info' %>
-      </div>
-    <% end %>
-    
     <main>
       <%= render "shared/flash" %>
       <%= yield %>

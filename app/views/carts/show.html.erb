@@ -7,6 +7,10 @@
   <% end %>
 
   <% if @cart && @cart.items.any? %>
+    
+    <% if Rails.configuration.stripe[:publishable_key]&.start_with?('pk_test_') %>
+      <%= render 'shared/stripe_test_info' %>
+    <% end %>
 
     <div>
       <ul>
