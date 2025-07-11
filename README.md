@@ -1,5 +1,5 @@
 # Cahier des charges Catzy
-[lien vers site](https://catzyv2.fly.dev/) faire fly deploy sur le terminal dans racine du projet
+[lien vers site](https://v2catzy.onrender.com/) faire fly deploy sur le terminal dans racine du projet
 ## Présentation
 Nous comptons faire un site de vente en ligne de photos de chatons. Ce site s’intégrer dans l’univers concurrentiel de la photographie animalière.
 

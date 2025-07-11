@@ -16,8 +16,26 @@ class OrdersController < ApplicationController
         # Créer la commande
         @order = current_user.orders.create!
 
+        # Créer les order_items avec vérification
         cart.items.each do |item|
-          OrderItem.create!(order: @order, item: item, price: item.price, quantity: 1)
+          # Vérifier que l'item existe encore
+          if item && item.persisted?
+            OrderItem.create!(
+              order: @order, 
+              item: item, 
+              price: item.price, 
+              quantity: 1
+            )
+          else
+            Rails.logger.warn "⚠️ Item #{item&.id} non trouvé lors de la création de commande"
+          end
+        end
+
+        # Vérifier que la commande a au moins un item
+        if @order.order_items.empty?
+          @order.destroy
+          redirect_to root_path, alert: "Erreur: aucun article valide dans le panier."
+          return
         end
 
         # Vider le panier
@@ -34,6 +52,10 @@ class OrdersController < ApplicationController
         
         Rails.logger.info "✅ Commande #{@order.id} créée avec succès pour l'utilisateur #{current_user.id}"
         
+      rescue ActiveRecord::InvalidForeignKey => e
+        Rails.logger.error "❌ Erreur contrainte FK: #{e.message}"
+        redirect_to root_path, alert: "Erreur: certains articles ne sont plus disponibles. Votre panier a été vidé."
+        return
       rescue => e
         Rails.logger.error "❌ Erreur création commande: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
@@ -44,7 +66,4 @@ class OrdersController < ApplicationController
       redirect_to root_path, notice: "Votre commande a été traitée avec succès !"
     end
   end
-
-  
-
 end
