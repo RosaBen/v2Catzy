@@ -41,6 +41,13 @@ class CheckoutController < ApplicationController
      return
    end
 
+   # Vérifier la configuration Stripe
+   unless Stripe.api_key.present?
+     Rails.logger.error "❌ Clé API Stripe manquante lors du checkout"
+     redirect_to cart_path, alert: "Configuration de paiement manquante. Contactez l'administrateur."
+     return
+   end
+
    begin
      session = Stripe::Checkout::Session.create(
        payment_method_types: ['card'],
@@ -64,9 +71,10 @@ class CheckoutController < ApplicationController
 
      redirect_to session.url, allow_other_host: true
    rescue Stripe::StripeError => e
+     Rails.logger.error "❌ Erreur Stripe: #{e.message}"
      redirect_to cart_path, alert: "Erreur lors de la création du paiement: #{e.message}"
    rescue => e
-     Rails.logger.error "Erreur checkout: #{e.message}"
+     Rails.logger.error "❌ Erreur checkout: #{e.message}"
      Rails.logger.error e.backtrace.join("\n")
      redirect_to cart_path, alert: "Une erreur inattendue s'est produite. Veuillez réessayer."
    end
