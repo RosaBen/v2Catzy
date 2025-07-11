@@ -6,11 +6,7 @@
   <% if current_user %>
     <div  class="d-flex align-items-start mb-4">
       <div class="me-4">
-          <% if current_user.avatar.attached? %>
-            <%= user_avatar(current_user, alt: "Avatar de #{current_user.fullname}", class: "avatar-profil") %>
-          <% else %>
-            <%= image_tag "pexels-pixabay-416160.jpg", alt: "Avatar par défaut", class: "avatar-profil" %>
-          <% end %>
+        <%= user_avatar(current_user, alt: "Avatar de #{current_user.fullname}", class: "avatar-profil") %>
       </div>
 
       <div>

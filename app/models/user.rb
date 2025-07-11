@@ -8,12 +8,13 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  # validates :first_name, presence: true
-  # validates :last_name, presence: true
+  # Validations plus souples pour éviter les erreurs lors des mises à jour
+  validates :first_name, length: { maximum: 50 }, allow_blank: true
+  validates :last_name, length: { maximum: 50 }, allow_blank: true
   validates :email, presence: true, uniqueness: true
-  validates :encrypted_password, presence: true, length: { minimum: 6 }
+  # Devise s'occupe déjà de la validation du password
 
   def fullname
-    "#{first_name} #{last_name}".strip
+    "#{first_name} #{last_name}".strip.presence || "Utilisateur"
   end
 end

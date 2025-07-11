@@ -7,7 +7,13 @@ class ProfilsController < ApplicationController
 
   def show
     @user = current_user
-    @orders = current_user.orders.includes(:order_items => :item).order(created_at: :desc)
+    begin
+      @orders = current_user.orders.includes(:order_items => :item).order(created_at: :desc)
+      Rails.logger.info "✅ Chargement de #{@orders.count} commandes pour utilisateur #{current_user.id}"
+    rescue => e
+      Rails.logger.error "❌ Erreur chargement commandes: #{e.message}"
+      @orders = []
+    end
   end
 
   def edit
@@ -18,20 +24,49 @@ class ProfilsController < ApplicationController
     @user = current_user
 
     begin
-      if @user.update(user_params)
-        if params[:user][:avatar].present?
-          flash[:notice] = "Profil et avatar mis à jour avec succès!"
-        else
-          flash[:notice] = "Profil mis à jour avec succès!"
+      # Nettoyer les paramètres avant la mise à jour
+      user_update_params = user_params.to_h
+      
+      # Supprimer les champs vides pour éviter les erreurs de validation
+      user_update_params.delete_if { |key, value| value.blank? && key != 'avatar' }
+      
+      # Si l'email est modifié, vérifier qu'il soit valide
+      if user_update_params['email'].present? && user_update_params['email'] != @user.email
+        if User.where(email: user_update_params['email']).where.not(id: @user.id).exists?
+          flash.now[:alert] = "Cet email est déjà utilisé par un autre compte."
+          render :edit, status: :unprocessable_entity
+          return
         end
-        redirect_to profil_path
+      end
+
+      if @user.update(user_update_params)
+        flash[:notice] = if params[:user][:avatar].present?
+          "Profil et avatar mis à jour avec succès!"
+        else
+          "Profil mis à jour avec succès!"
+        end
+        
+        # Redirection avec succès
+        redirect_to profil_path and return
       else
-        flash.now[:alert] = "Erreur lors de la mise à jour du profil: #{@user.errors.full_messages.join(', ')}"
+        # Erreurs de validation
+        error_messages = @user.errors.full_messages
+        Rails.logger.warn "❌ Erreurs validation profil utilisateur #{@user.id}: #{error_messages.join(', ')}"
+        
+        flash.now[:alert] = "Erreur lors de la mise à jour : #{error_messages.join(', ')}"
         render :edit, status: :unprocessable_entity
       end
+      
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error "❌ Erreur validation profil: #{e.message}"
+      flash.now[:alert] = "Erreur de validation : #{e.message}"
+      render :edit, status: :unprocessable_entity
+      
     rescue => e
-      Rails.logger.error "Erreur lors de la mise à jour du profil: #{e.message}"
-      flash.now[:alert] = "Une erreur est survenue lors de la mise à jour du profil."
+      Rails.logger.error "❌ Erreur lors de la mise à jour du profil utilisateur #{current_user.id}: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      
+      flash.now[:alert] = "Une erreur inattendue s'est produite. Veuillez réessayer."
       render :edit, status: :unprocessable_entity
     end
   end
