@@ -8,6 +8,10 @@ class ProfilsController < ApplicationController
   def show
     @user = current_user
     begin
+      # Traiter les commandes en attente s'il y en a
+      PendingOrderService.process_pending_orders_for_user(current_user)
+      
+      # Charger les commandes
       @orders = current_user.orders.includes(:order_items => :item).order(created_at: :desc)
       Rails.logger.info "✅ Chargement de #{@orders.count} commandes pour utilisateur #{current_user.id}"
     rescue => e

@@ -32,7 +32,13 @@
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h5 class="mb-0">Commande #<%= order.id %></h5>
-                  <span class="badge bg-success"><%= number_to_currency(order.amount / 100.0, unit: "€", separator: ",", delimiter: " ") %></span>
+                  <span class="badge bg-success">
+                    <% if order.respond_to?(:amount) && order.amount.present? %>
+                      <%= number_to_currency(order.amount / 100.0, unit: "€", separator: ",", delimiter: " ") %>
+                    <% else %>
+                      Commande validée
+                    <% end %>
+                  </span>
                 </div>
                 <div class="card-body">
                   <p class="text-muted mb-2">
