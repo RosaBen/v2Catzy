@@ -1,27 +1,43 @@
 <div class="container">
 
-  <h1 class="mt-5 mb-5">Merci pour votre commande </h1>
+  <h1 class="mt-5 mb-5">Merci pour votre commande !</h1>
 
   <p class="lead">Votre paiement a bien été reçu. Nous préparons votre commande !</p>
 
-  <p><%= flash[:notice] %></p>
-
-  <h2 class="mt-4 mb-4">Récapitulatif :</h2>
-
-  <% if @order.items.any? %>
-    <ul>
-      <% @order.items.each do |item| %>
-        <li class="card card-cart mb-3 p-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <span><h3>
-            <%= item.title %></h3> - <%= number_to_currency(item.price, unit: "€") %></span>
-          </div>
-        </li>
-      <% end %>
-    </ul>
+  <% if flash[:notice] %>
+    <div class="alert alert-success">
+      <%= flash[:notice] %>
+    </div>
   <% end %>
 
+  <% if @order&.order_items&.any? %>
+    <h2 class="mt-4 mb-4">Récapitulatif :</h2>
+    <ul>
+      <% @order.order_items.includes(:item).each do |order_item| %>
+        <% if order_item.item %>
+          <li class="card card-cart mb-3 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <span>
+                <h3><%= order_item.item.title %></h3>
+                <%= number_to_currency(order_item.price, unit: "€") %> 
+                <small class="text-muted">(x<%= order_item.quantity %>)</small>
+              </span>
+            </div>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+    
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <h4>Total : <%= number_to_currency(@order.total_price, unit: "€") %></h4>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <p>Votre commande a été traitée avec succès !</p>
+    </div>
+  <% end %>
 
   <%= link_to "Retour à l'accueil", root_path, class: "btn btn-primary mb-4" %>
-  <!-- <%= link_to "Voir mon panier", cart_path, class: "btn btn-primary mb-4" %> -->
+  <%= link_to "Voir nos autres articles", items_path, class: "btn btn-outline-primary mb-4 ms-2" %>
+</div>
 </div>
