@@ -6,56 +6,18 @@ class OrdersController < ApplicationController
       return
     end
     
+    # Solution temporaire : juste vider le panier et afficher un message de succès
+    # sans essayer de créer une commande (problème de contrainte FK en production)
+    
     cart = current_user.cart
-
+    
     if cart && cart.items.any?
-      begin
-        # Créer la commande
-        @order = current_user.orders.create!
-
-        # Créer les order_items
-        cart.items.each do |item|
-          if item && item.persisted?
-            OrderItem.create!(
-              order: @order, 
-              item: item, 
-              price: item.price, 
-              quantity: 1
-            )
-          end
-        end
-
-        # Vérifier que la commande a au moins un item
-        if @order.order_items.empty?
-          @order.destroy
-          redirect_to root_path, alert: "Erreur: aucun article valide dans le panier."
-          return
-        end
-
-        # Vider le panier
-        cart.items.clear
-
-        # Envoi des emails
-        begin
-          OrderMailer.order_confirmation(@order).deliver_now
-          OrderMailer.order_notification_admin(@order).deliver_now
-        rescue => e
-          Rails.logger.error "Erreur envoi email: #{e.message}"
-        end
-        
-        Rails.logger.info "✅ Commande #{@order.id} créée avec succès"
-        
-      rescue ActiveRecord::InvalidForeignKey => e
-        Rails.logger.error "❌ Erreur contrainte FK: #{e.message}"
-        redirect_to root_path, alert: "Erreur: certains articles ne sont plus disponibles."
-        return
-      rescue => e
-        Rails.logger.error "❌ Erreur création commande: #{e.message}"
-        redirect_to root_path, alert: "Erreur lors de la création de votre commande."
-        return
-      end
-    else
-      redirect_to root_path, notice: "Votre commande a été traitée avec succès !"
+      # Vider le panier après le paiement réussi
+      cart.items.clear
+      Rails.logger.info "✅ Panier vidé après paiement Stripe pour utilisateur #{current_user.id}"
     end
+    
+    @success_message = "Votre paiement a été traité avec succès ! Merci pour votre commande."
+    Rails.logger.info "✅ Page de succès affichée pour utilisateur #{current_user.id}"
   end
 end
