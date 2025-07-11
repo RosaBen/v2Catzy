@@ -1,43 +1,24 @@
 <div class="container">
-
   <h1 class="mt-5 mb-5">Merci pour votre commande !</h1>
 
-  <p class="lead">Votre paiement a bien été reçu. Nous préparons votre commande !</p>
+  <div class="alert alert-success">
+    <h4>✅ Paiement confirmé</h4>
+    <p class="lead"><%= @success_message || "Votre paiement a bien été reçu. Nous préparons votre commande !" %></p>
+  </div>
 
-  <% if flash[:notice] %>
-    <div class="alert alert-success">
-      <%= flash[:notice] %>
-    </div>
-  <% end %>
-
-  <% if @order&.order_items&.any? %>
-    <h2 class="mt-4 mb-4">Récapitulatif :</h2>
+  <div class="card mt-4 p-4">
+    <h5>Que se passe-t-il maintenant ?</h5>
     <ul>
-      <% @order.order_items.includes(:item).each do |order_item| %>
-        <% if order_item.item %>
-          <li class="card card-cart mb-3 p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <span>
-                <h3><%= order_item.item.title %></h3>
-                <%= number_to_currency(order_item.price, unit: "€") %> 
-                <small class="text-muted">(x<%= order_item.quantity %>)</small>
-              </span>
-            </div>
-          </li>
-        <% end %>
-      <% end %>
+      <li>✅ Votre paiement a été traité avec succès</li>
+      <li>📧 Vous recevrez un email de confirmation sous peu</li>
+      <li>📦 Nous préparons votre commande</li>
+      <li>🚚 Vous serez notifié de l'expédition</li>
     </ul>
-    
-    <div class="d-flex justify-content-between align-items-center mt-4">
-      <h4>Total : <%= number_to_currency(@order.total_price, unit: "€") %></h4>
-    </div>
-  <% else %>
-    <div class="alert alert-info">
-      <p>Votre commande a été traitée avec succès !</p>
-    </div>
-  <% end %>
+  </div>
 
-  <%= link_to "Retour à l'accueil", root_path, class: "btn btn-primary mb-4" %>
-  <%= link_to "Voir nos autres articles", items_path, class: "btn btn-outline-primary mb-4 ms-2" %>
+  <div class="mt-4">
+    <%= link_to "Retour à l'accueil", root_path, class: "btn btn-primary me-2" %>
+    <%= link_to "Voir nos autres articles", items_path, class: "btn btn-outline-primary" %>
+  </div>
 </div>
 </div>
