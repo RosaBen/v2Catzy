@@ -14,6 +14,7 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 
 plugin :tmp_restart
 
-plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
+# Disable solid_queue plugin for production
+# plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
