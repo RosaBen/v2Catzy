@@ -31,10 +31,17 @@ class ProfilsController < ApplicationController
 
   def destroy
     @user = current_user
-    @user.destroy
-    reset_session  
-    flash[:notice] = "Compte supprimé avec succès."
-    redirect_to root_path
+    
+    # Vérifier si l'utilisateur a des commandes
+    if @user.orders.exists?
+      flash[:alert] = "Impossible de supprimer votre compte car vous avez des commandes en cours. Contactez le support."
+      redirect_to edit_user_registration_path
+    else
+      @user.destroy
+      reset_session  
+      flash[:notice] = "Compte supprimé avec succès."
+      redirect_to root_path
+    end
   end
 
   private
