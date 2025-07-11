@@ -90,17 +90,38 @@ production:
     <<: *primary_production
     database: catzy_v2_production_cache
     migrations_paths: db/cache_migrate
-    url: <%= (URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_cache" }).to_s if ENV["DATABASE_URL"] %>
+    # url: <%= (URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_cache" }).to_s if ENV["DATABASE_URL"] %>
+    url: <%
+      if ENV["DATABASE_URL"].is_a?(String)
+        uri = URI.parse(ENV["DATABASE_URL"])
+        uri.path = uri.path + "_cache"
+        uri.to_s
+      end
+      %>  
 
   queue:
     <<: *primary_production
     database: catzy_v2_production_queue
     migrations_paths: db/queue_migrate
-    url: <%= (URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_queue" }).to_s if ENV["DATABASE_URL"] %>
+    # url: <%= (URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_queue" }).to_s if ENV["DATABASE_URL"] %>
+    url: <%
+      if ENV["DATABASE_URL"].is_a?(String)
+        uri = URI.parse(ENV["DATABASE_URL"])
+        uri.path = uri.path + "_queue"
+        uri.to_s
+      end
+      %>  
 
   cable:
     <<: *primary_production
     database: catzy_v2_production_cable
     migrations_paths: db/cable_migrate
-    url: <%= (URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_cable" }).to_s if ENV["DATABASE_URL"] %>
+    # url: <%= (URI.parse(ENV["DATABASE_URL"]).tap { |url| url.path += "_cable" }).to_s if ENV["DATABASE_URL"] %>
+    url: <%
+      if ENV["DATABASE_URL"].is_a?(String)
+        uri = URI.parse(ENV["DATABASE_URL"])
+        uri.path = uri.path + "_cable"
+        uri.to_s
+      end
+      %>  
 
