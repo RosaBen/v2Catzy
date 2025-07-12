@@ -54,6 +54,24 @@ class ProfilsController < ApplicationController
     end
   end
 
+  def remove_avatar
+    @user = current_user
+    
+    begin
+      if @user.avatar.attached?
+        @user.avatar.purge
+        flash[:notice] = "Avatar supprimé avec succès!"
+      else
+        flash[:alert] = "Aucun avatar à supprimer."
+      end
+    rescue => e
+      Rails.logger.error "❌ Erreur suppression avatar: #{e.message}"
+      flash[:alert] = "Erreur lors de la suppression de l'avatar."
+    end
+    
+    redirect_to profil_path
+  end
+
   private
 
   def user_params

@@ -2,7 +2,7 @@ module AvatarsHelper
   def user_avatar(user, options = {})
     css_class = options[:class] || "avatar-profil"
     
-    if user&.avatar&.attached?
+    if user_has_valid_avatar?(user)
       begin
         image_tag url_for(user.avatar), alt: "Avatar utilisateur", class: css_class
       rescue => e
@@ -11,6 +11,19 @@ module AvatarsHelper
       end
     else
       default_avatar_guaranteed(css_class)
+    end
+  end
+
+  def user_has_valid_avatar?(user)
+    return false unless user&.avatar&.attached?
+    
+    begin
+      # Tenter d'accéder à l'URL pour vérifier si l'avatar existe vraiment
+      url_for(user.avatar)
+      true
+    rescue => e
+      Rails.logger.warn "🔍 Avatar attached but not accessible: #{e.message}"
+      false
     end
   end
 

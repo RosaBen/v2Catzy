@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   root to: "items#index"
 
   resources :items
-  resource :profil
+  resource :profil do
+    delete :remove_avatar, on: :member
+  end
   resources :avatars, only: [ :create, :update, :destroy ]
   resource :cart, only: [:show]
   resources :cart_items, only: [:create]
