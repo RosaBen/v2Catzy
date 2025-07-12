@@ -8,8 +8,10 @@ Rails.application.routes.draw do
 
   resources :items
   resource :profil do
-    delete :remove_avatar, on: :member
+    delete :remove_avatar
   end
+  # Route alternative pour supprimer avatar
+  delete "profil_remove_avatar", to: "profils#remove_avatar", as: :profil_remove_avatar
   resources :avatars, only: [ :create, :update, :destroy ]
   resource :cart, only: [:show]
   resources :cart_items, only: [:create]

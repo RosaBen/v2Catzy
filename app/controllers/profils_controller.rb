@@ -25,6 +25,19 @@ class ProfilsController < ApplicationController
     @user = current_user
 
     begin
+      # Gérer la suppression d'avatar si demandée
+      if params[:remove_avatar] == 'true'
+        Rails.logger.info "🗑️ Avatar removal requested via update"
+        if @user.avatar.attached?
+          @user.avatar.purge
+          flash[:notice] = "Avatar supprimé avec succès!"
+        else
+          flash[:alert] = "Aucun avatar à supprimer."
+        end
+        redirect_to profil_path
+        return
+      end
+
       if @user.update(user_params)
         flash[:notice] = "Profil mis à jour avec succès!"
         redirect_to profil_path
@@ -55,17 +68,22 @@ class ProfilsController < ApplicationController
   end
 
   def remove_avatar
+    Rails.logger.info "🗑️ remove_avatar action called for user: #{current_user&.email}"
     @user = current_user
     
     begin
       if @user.avatar.attached?
+        Rails.logger.info "✅ Avatar found, purging..."
         @user.avatar.purge
         flash[:notice] = "Avatar supprimé avec succès!"
+        Rails.logger.info "✅ Avatar purged successfully"
       else
+        Rails.logger.warn "⚠️ No avatar to remove"
         flash[:alert] = "Aucun avatar à supprimer."
       end
     rescue => e
       Rails.logger.error "❌ Erreur suppression avatar: #{e.message}"
+      Rails.logger.error e.backtrace.first(5).join("\n")
       flash[:alert] = "Erreur lors de la suppression de l'avatar."
     end
     
