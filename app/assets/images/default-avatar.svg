@@ -1,0 +1,5 @@
+<!-- Image de test pour avatar par défaut -->
+<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+  <rect width="60" height="60" fill="#f8f9fa" stroke="#dee2e6"/>
+  <text x="30" y="35" font-family="Arial" font-size="24" text-anchor="middle" fill="#6c757d">👤</text>
+</svg>

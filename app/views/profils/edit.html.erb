@@ -30,8 +30,9 @@
           <%= user_avatar(@user, class: "avatar-profil-edit") %>
           <br>
         <% else %>
-          <%= image_tag "pexels-pixabay-416160.jpg", alt: "Avatar par défaut", class: "avatar-profil-edit" %>
+          <%= user_avatar(@user, class: "avatar-profil-edit") %>
           <br>
+          <small class="text-muted">Avatar par défaut affiché ci-dessus</small>
         <% end %>
 
         <div class="file-upload-wrapper mt-2">
