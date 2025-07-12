@@ -5,19 +5,10 @@ class CheckoutController < ApplicationController
    item = Item.find(params[:item_id])
 
    begin
-     # Préparer les données pour stockage temporaire
-     order_data = {
-       items: [{ id: item.id, price: item.price, title: item.title, quantity: 1 }],
-       total_amount: (item.price * 100).to_i # En centimes
-     }
-     
-     # Stocker temporairement dans le service
-     PendingOrderService.store_pending_order(current_user.id, order_data)
-     
-     # Aussi stocker en session comme backup
+     # Stocker en session (solution simple et fiable)
      session[:checkout_cart_id] = nil # Pas de panier pour achat direct
      session[:checkout_total_amount] = (item.price * 100).to_i
-     session[:checkout_items] = order_data[:items]
+     session[:checkout_items] = [{ 'id' => item.id, 'price' => item.price, 'title' => item.title, 'quantity' => 1 }]
 
      stripe_session = Stripe::Checkout::Session.create(
        payment_method_types: [ "card" ],
@@ -66,20 +57,10 @@ class CheckoutController < ApplicationController
      # Calculer le montant total
      total_amount = cart.items.sum(&:price)
      
-     # Préparer les données à stocker temporairement
-     order_data = {
-       items: cart.items.map { |item| { id: item.id, price: item.price, title: item.title, quantity: 1 } },
-       total_amount: (total_amount * 100).round, # En centimes
-       cart_id: cart.id
-     }
-     
-     # Stocker temporairement dans le service (au cas où la DB ne serait pas prête)
-     PendingOrderService.store_pending_order(current_user.id, order_data)
-     
-     # Aussi stocker en session comme backup
+     # Stocker en session uniquement (solution simple et fiable)
      session[:checkout_cart_id] = cart.id
      session[:checkout_total_amount] = (total_amount * 100).round
-     session[:checkout_items] = order_data[:items]
+     session[:checkout_items] = cart.items.map { |item| { 'id' => item.id, 'price' => item.price, 'title' => item.title, 'quantity' => 1 } }
 
      stripe_session = Stripe::Checkout::Session.create(
        payment_method_types: ['card'],
