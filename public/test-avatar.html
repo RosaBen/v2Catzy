@@ -11,28 +11,42 @@
     <h1>Test des avatars par défaut</h1>
 
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2">
+        <h5>SVG Simple</h5>
+        <img src="/avatar.svg" alt="SVG Simple" class="avatar-profil" style="width: 60px; height: 60px; border-radius: 50%;">
+      </div>
+      
+      <div class="col-md-2">
         <h5>SVG Public</h5>
         <img src="/default-avatar.svg" alt="SVG Public" class="avatar-profil" style="width: 60px; height: 60px;">
       </div>
 
-      <div class="col-md-3">
+      <div class="col-md-2">
         <h5>Base64 SVG</h5>
         <img
           src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNmOGY5ZmEiIHN0cm9rZT0iI2RlZTJlNiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIzNSIgcj0iMTUiIGZpbGw9IiM2Yzc1N2QiLz4KICA8cGF0aCBkPSJNMjUgNzUgUTI1IDYwIDUwIDYwIFE3NSA2MCA3NSA3NSIgZmlsbD0iIzZjNzU3ZCIvPgo8L3N2Zz4="
           alt="Base64 SVG" class="avatar-profil" style="width: 60px; height: 60px;">
       </div>
 
-      <div class="col-md-3">
-        <h5>Placeholder externe</h5>
-        <img src="https://via.placeholder.com/100x100/f8f9fa/6c757d?text=👤" alt="Placeholder" class="avatar-profil"
-          style="width: 60px; height: 60px; border-radius: 50%;">
+      <div class="col-md-2">
+        <h5>Inline SVG</h5>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 100 100" style="border-radius: 50%;">
+            <circle cx="50" cy="50" r="48" fill="#e9ecef" stroke="#dee2e6" stroke-width="2"/>
+            <circle cx="50" cy="35" r="12" fill="#6c757d"/>
+            <ellipse cx="50" cy="75" rx="20" ry="12" fill="#6c757d"/>
+          </svg>
+        </div>
       </div>
 
-      <div class="col-md-3">
-        <h5>Fallback CSS</h5>
-        <div class="avatar-profil bg-light border rounded-circle d-flex align-items-center justify-content-center"
-          style="font-size: 2em; width: 60px; height: 60px; min-width: 60px; min-height: 60px; color: #6c757d;">👤</div>
+      <div class="col-md-2">
+        <h5>CSS Point</h5>
+        <div class="avatar-profil bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="font-size: 1.5em; width: 60px; height: 60px; font-weight: bold;">●</div>
+      </div>
+
+      <div class="col-md-2">
+        <h5>CSS Rond</h5>
+        <div class="avatar-profil bg-secondary rounded-circle" style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border: 2px solid #dee2e6;"></div>
       </div>
     </div>
   </div>

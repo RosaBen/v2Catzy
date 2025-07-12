@@ -2,59 +2,52 @@ module AvatarsHelper
   def user_avatar(user, options = {})
     css_class = options[:class] || "avatar-profil"
     
-    begin
-      if user&.avatar&.attached?
+    if user&.avatar&.attached?
+      begin
         image_tag url_for(user.avatar), alt: "Avatar utilisateur", class: css_class
-      else
-        render_default_avatar(css_class)
+      rescue => e
+        Rails.logger.error "❌ User avatar failed: #{e.message}"
+        default_avatar_guaranteed(css_class)
       end
-    rescue => e
-      Rails.logger.error "❌ Erreur avatar helper: #{e.message}"
-      ultimate_fallback_avatar(css_class)
+    else
+      default_avatar_guaranteed(css_class)
     end
   end
 
   private
 
-  def render_default_avatar(css_class)
-    Rails.logger.info "🎭 Render default avatar - Environment: #{Rails.env}"
+  def default_avatar_guaranteed(css_class)
+    Rails.logger.info "🎭 Generating default avatar for #{Rails.env}"
     
-    # PRIORITÉ 1: Base64 intégré (toujours disponible, ne dépend d'aucun fichier)
+    # OPTION 1: SVG simple dans public/ - Marche toujours sur Render
+    if avatar_file_exists?("/avatar.svg")
+      Rails.logger.info "✅ Using public SVG avatar"
+      return image_tag "/avatar.svg", alt: "Avatar", class: css_class, 
+                      style: "width: 60px; height: 60px; border-radius: 50%; object-fit: cover;"
+    end
+
+    # OPTION 2: Base64 intégré - Ne peut jamais échouer
+    Rails.logger.info "✅ Using guaranteed Base64 SVG avatar"
+    base64_avatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyOCIgZmlsbD0iI2U5ZWNlZiIgc3Ryb2tlPSIjZGVlMmU2IiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSIzMCIgY3k9IjIyIiByPSI4IiBmaWxsPSIjNmM3NTdkIi8+PGVsbGlwc2UgY3g9IjMwIiBjeT0iNDIiIHJ4PSIxMiIgcnk9IjgiIGZpbGw9IiM2Yzc1N2QiLz48L3N2Zz4K"
+    
     begin
-      base64_svg = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNmOGY5ZmEiIHN0cm9rZT0iI2RlZTJlNiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIzNSIgcj0iMTUiIGZpbGw9IiM2Yzc1N2QiLz4KICA8cGF0aCBkPSJNMjUgNzUgUTI1IDYwIDUwIDYwIFE3NSA2MCA3NSA3NSIgZmlsbD0iIzZjNzU3ZCIvPgo8L3N2Zz4="
-      Rails.logger.info "✅ Using Base64 SVG avatar"
-      return image_tag base64_svg, alt: "Avatar par défaut", class: css_class
+      image_tag base64_avatar, alt: "Avatar", class: css_class, 
+                style: "width: 60px; height: 60px; border-radius: 50%; object-fit: cover;"
     rescue => e
-      Rails.logger.error "❌ Base64 SVG avatar failed: #{e.message}"
+      Rails.logger.error "❌ Even Base64 failed: #{e.message}"
+      # ULTIME FALLBACK: CSS pur - impossible à échouer
+      content_tag :div, "", 
+                  class: "#{css_class} bg-secondary rounded-circle", 
+                  style: "width: 60px; height: 60px; border: 2px solid #6c757d; flex-shrink: 0;"
     end
-
-    # PRIORITÉ 2: SVG dans public/ (accessible directement via URL)
-    begin
-      Rails.logger.info "🔄 Trying public SVG avatar"
-      return image_tag "/default-avatar.svg", alt: "Avatar par défaut", class: css_class
-    rescue => e
-      Rails.logger.error "❌ Public SVG avatar failed: #{e.message}"
-    end
-
-    # PRIORITÉ 3: Assets Rails (peut échouer en production selon la config)
-    unless Rails.env.production?
-      begin
-        Rails.logger.info "🔄 Trying Rails assets avatar"
-        return image_tag "default-avatar.svg", alt: "Avatar par défaut", class: css_class
-      rescue => e
-        Rails.logger.debug "Assets SVG avatar failed: #{e.message}"
-      end
-    end
-
-    # PRIORITÉ 4: Fallback ultime garanti
-    Rails.logger.warn "⚠️ All image options failed, using CSS fallback"
-    ultimate_fallback_avatar(css_class)
   end
 
-  def ultimate_fallback_avatar(css_class)
-    # CSS pur avec emoji - toujours disponible
-    content_tag :div, "👤", 
-                class: "#{css_class} bg-light border rounded-circle d-flex align-items-center justify-content-center", 
-                style: "font-size: 2em; width: 60px; height: 60px; min-width: 60px; min-height: 60px; color: #6c757d;"
+  def avatar_file_exists?(path)
+    begin
+      full_path = Rails.root.join("public#{path}")
+      File.exist?(full_path) && File.size(full_path) > 0
+    rescue
+      false
+    end
   end
 end
