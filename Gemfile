@@ -72,7 +72,7 @@ gem "faker"
 gem "devise"
 gem "stripe"
 gem "uri", "~> 1.0.2"
-gem "redis", "~> 5.0"
+gem "redis", "~> 5.4"
 
 # test
 
